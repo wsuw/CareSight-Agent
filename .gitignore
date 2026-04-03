@@ -1,0 +1,35 @@
+# environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# data and models
+data/*
+!data/README.md
+models/
+*.pt
+*.pth
+
+# vector database
+chroma_db/
+faiss_index/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# logs
+logs/
+*.log
