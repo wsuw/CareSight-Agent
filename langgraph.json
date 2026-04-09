@@ -1,0 +1,15 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "agent": "./src/agents/graph.py:builder"
+  },
+  "env": ".env",
+  "checkpointer": {
+    "path": "./src/agents/graph.py:generate_checkpointer"
+  },
+  "store": {
+    "path": "./src/agents/graph.py:generate_store"
+  }
+}

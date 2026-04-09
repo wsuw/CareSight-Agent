@@ -12,3 +12,6 @@ class AgentState(TypedDict):
     
     # RAG 检索出的医疗上下文片段
     context: str
+
+    # 长期存储中提取出的用户档案信息（过敏、病史等）
+    user_profile: str

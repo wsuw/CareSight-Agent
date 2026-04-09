@@ -20,3 +20,4 @@ soundfile
 edge-tts
 pygame
 numpy
+langgraph-cli[inmem]

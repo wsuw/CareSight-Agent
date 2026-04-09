@@ -12,9 +12,8 @@ class Settings:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     OPENAI_API_BASE = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
-    LLM_MODEL_NAME = os.getenv(
-        "LLM_MODEL_NAME", "gemini-3.1-flash-lite-preview"
-    )  # 默认换成 Google 模型
+    TAVILY_API_KEY = os.getenv("TAVILY_API_KEY", "")
+    LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "").strip('"').strip("'")
     TEMPERATURE = float(os.getenv("TEMPERATURE", "0.0"))
 
     # LangSmith Settings (Optional)
@@ -28,6 +27,12 @@ class Settings:
 
     # Tools Settings
     WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")
+
+    # Persistence Settings
+    POSTGRES_URL = os.getenv(
+        "POSTGRES_URI",
+        "",
+    )
 
 
 # 单例配置对象

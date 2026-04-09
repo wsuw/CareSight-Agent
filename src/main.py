@@ -60,11 +60,16 @@ def main():
 
             print("\n🤖 CareSight 正在进行多智能体诊断推演...")
 
+            # --- [持久化配置] ---
+            # 为每一轮对话指定一个 thread_id，这样 PostgresSaver 才能找回历史状态
+            # 在企业级应用中，这里可以是用户的唯一 ID 或 Session ID
+            config = {"configurable": {"thread_id": "global_test_user_01"}}
+
             # 使用 LangGraph 的状态进行调用
             inputs = {"messages": [("user", user_input)]}
 
-            # 采用 stream 模式，观测各节点的流转过程
-            for output in app.stream(inputs):
+            # 采用 stream 模式，并在调用时传入 config
+            for output in app.stream(inputs, config=config):
                 for node_name, node_state in output.items():
                     print(f" ⏳ [图节点: {node_name}] 处理完毕。")
 
