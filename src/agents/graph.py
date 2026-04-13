@@ -189,13 +189,14 @@ def chat_node(state: AgentState, config: RunnableConfig, store: BaseStore):
             f"【用户健康档案预览】：\n{user_profile}\n\n"
             f"【医疗库知识】：\n{context}\n\n"
             "重要工具说明：\n"
-            "1. 查询档案：如果用户想详细核对档案，使用 list_health_profile。\n"
-            "2. 清理档案：只有在用户明确要求移除信息时，才使用 delete_health_record。\n"
-            "3. 实时天气：当用户问天气，或提到想要【出门、散步、去医院】时，必须先调用 get_weather_forecast 确认安全建议。\n"
-            "4. 互联网搜索：用于查询库外医疗知识或最新动态。\n\n"
+            "1. 记录档案：当用户提到【过敏、病史、当前用药、身份姓名、家庭健康状况】时，必须立即调用 upsert_health_record 进行存储。\n"
+            "2. 查询档案：如果用户想详细核对档案，使用 list_health_profile。\n"
+            "3. 清理档案：只有在用户明确要求移除信息时，才使用 delete_health_record。\n"
+            "4. 实时天气：当用户问天气，或提到想要【出门、散步、去医院】时，必须先调用 get_weather_forecast 确认安全建议。\n"
+            "5. 互联网搜索：用于查询库外医疗知识或最新动态。\n\n"
             "原则：亲切、简明、有温度。如果有【过敏】、当前【正在接受治疗】或天气恶劣（如：紫外线强、路面湿滑），必须在回复最开始进行播报提醒！\n\n"
-            "---【自动记忆提取】---\n"
-            "仅在最终答复时，提取新事实并以 [MEMORY_EXTRACTED]{'facts': [...]} [/MEMORY_EXTRACTED] 格式放在末尾。"
+            "---【记忆准则】---\n"
+            "对于用户的基本身份和关键医疗信息，务必采取【先调用工具记录，再口头确认】的策略。确保数据库是真的入库了。"
         )
     )
 
@@ -261,7 +262,8 @@ def tool_execution_node(state: AgentState, config: RunnableConfig, store: BaseSt
         print(f" 🛠️ 执行工具: {tool_name}")
 
         try:
-            if tool_name in ["list_health_profile", "delete_health_record"]:
+            # 确保三款档案工具都能接收到数据库 store
+            if tool_name in ["list_health_profile", "delete_health_record", "upsert_health_record"]:
                 observation = tool.invoke({**kwargs, "store": store}, config=config)
             else:
                 observation = tool.invoke(kwargs, config=config)

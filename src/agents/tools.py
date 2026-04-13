@@ -1,8 +1,9 @@
 from langchain_tavily import TavilySearch
-from langchain_core.tools import tool
+from langchain_core.tools import tool, InjectedToolArg
 from src.config.settings import settings
 from typing import Optional, Annotated, Any
 from langchain_core.runnables import RunnableConfig
+from langgraph.store.base import BaseStore
 import os
 
 # 确保 API Key 已注入环境变量
@@ -22,7 +23,8 @@ tavily_tool = TavilySearch(
 
 @tool
 def list_health_profile(
-    config: RunnableConfig, store: Annotated[Optional[Any], "store"] = None
+    config: Annotated[RunnableConfig, InjectedToolArg] = None,
+    store: Annotated[BaseStore, InjectedToolArg] = None,
 ):
     """
     列出当前用户健康档案中记录的所有事实（如疾病、过敏、用药）。
@@ -46,8 +48,8 @@ def list_health_profile(
 @tool
 def delete_health_record(
     fact_keyword: str,
-    config: RunnableConfig,
-    store: Annotated[Optional[Any], "store"] = None,
+    config: Annotated[RunnableConfig, InjectedToolArg] = None,
+    store: Annotated[BaseStore, InjectedToolArg] = None,
 ):
     """
     仅当用户【明确要求删除、撤销或纠正错误】时，才从健康档案中删除特定记录。
@@ -73,6 +75,31 @@ def delete_health_record(
 
 
 @tool
+def upsert_health_record(
+    fact: str,
+    config: Annotated[RunnableConfig, InjectedToolArg] = None,
+    store: Annotated[BaseStore, InjectedToolArg] = None,
+):
+    """
+    在健康档案中新增或更新一个重要的健康事实（如：过敏史、确诊疾病、当前用药、家庭成员健康状态）。
+    当用户提到“我有...”、“我最近在吃...”、“医生说我...”或者“我叫...”时使用。
+    """
+    user_id = config.get("configurable", {}).get("user_id") or "default_user"
+    namespace = ("memories", user_id)
+
+    if not store:
+        return "错误：存储系统未初始化。"
+
+    # 为每条记录生成一个唯一的 key
+    import hashlib
+
+    fact_id = hashlib.md5(fact.encode()).hexdigest()
+    store.put(namespace, fact_id, {"fact": fact})
+
+    return f"成功！已将以下信息记入你的健康档案：'{fact}'。我会始终牢记这一点。"
+
+
+@tool
 def get_weather_forecast(location: str):
     """
     获取指定城市的实时天气及户外出行建议。
@@ -93,4 +120,10 @@ def get_weather_forecast(location: str):
 
 
 # 定义工具列表
-all_tools = [tavily_tool, list_health_profile, delete_health_record, get_weather_forecast]
+all_tools = [
+    tavily_tool,
+    list_health_profile,
+    delete_health_record,
+    upsert_health_record,
+    get_weather_forecast,
+]
