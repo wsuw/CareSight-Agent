@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: caresight-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: caresight
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d caresight"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  agent:
+    build: .
+    container_name: caresight-agent
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "2024:2024"
+    env_file:
+      - .env
+    environment:
+      # 在容器网络里，主机名就是服务名 'db'
+      - POSTGRES_URL=postgresql://postgres:123456@db:5432/caresight
+    # 挂载源代码以便开发（可选，生产环境通常不需要）
+    # volumes:
+    #   - .:/app
+
+volumes:
+  postgres_data:

@@ -1,0 +1,23 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 环境与构建
+.env
+.venv
+env/
+venv/
+.git/
+.gitignore
+
+# 本地数据与缓存
+data/
+chroma_db/
+error_log.txt
+diag.txt
+
+# IDE 配置
+.vscode/
+.idea/
+.gemini/

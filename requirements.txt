@@ -1,8 +1,10 @@
 langchain>=0.2.0
 langchain-core>=0.2.0
 langchain-community>=0.2.0
-langgraph>=0.1.0
+langgraph>=0.2.0
+langgraph-checkpoint-postgres
 langchain-google-genai
+langchain-tavily
 chromadb>=0.5.0
 sentence-transformers>=2.2.0
 torch
@@ -11,7 +13,6 @@ openai-whisper
 python-dotenv
 pydantic>=2.0.0
 openai>=1.0.0
-langchain-google-genai
 langchain-ollama
 langchain-chroma
 tqdm
@@ -21,3 +22,6 @@ edge-tts
 pygame
 numpy
 langgraph-cli[inmem]
+tavily-python
+psycopg[binary]
+psycopg-pool

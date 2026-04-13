@@ -29,10 +29,7 @@ class Settings:
     WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")
 
     # Persistence Settings
-    POSTGRES_URL = os.getenv(
-        "POSTGRES_URI",
-        "",
-    )
+    POSTGRES_URL = os.getenv("POSTGRES_URL") or os.getenv("POSTGRES_URI") or ""
 
 
 # 单例配置对象
